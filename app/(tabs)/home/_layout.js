@@ -79,7 +79,7 @@ export default function Layout() {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontSize: 20 }}>TaskCore</Text>
+          <Text style={{ fontSize: 20, color:"#FFFFFF"  }}>TaskCore</Text>
           <Pressable onPress={toggleSidebar}>
             <Text style={styles.closeButton}>&#9776;</Text>
           </Pressable>
@@ -96,6 +96,7 @@ export default function Layout() {
             borderBottomWidth: 2,
             marginTop: 100,
             backgroundColor: "#FFFFFF",
+            borderRadius: 10
           }}
         >
           <MaterialIcons style={{}} name="person" size={24} color="gray" />
@@ -135,13 +136,14 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     width: 200,
-    backgroundColor: "#00FFFF",
+    backgroundColor: "#6699CC",
     padding: 20,
     marginTop: 40,
   },
   closeButton: {
-    color: "#000000",
+    color: "#FFFFFF",
     textAlign: "right",
     fontSize: 20,
+    
   },
 });
