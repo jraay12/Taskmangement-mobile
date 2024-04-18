@@ -62,7 +62,7 @@ const Register = () => {
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ marginTop: 20, alignItems: "center"}}>
-          <Text style={{ fontSize: 16, fontWeight: "600", color: "#0066b2" }}>
+          <Text style={{ fontSize: 30, fontWeight: "900", color: "#0066b2" }}>
             Task Manager App
           </Text>
         </View>
