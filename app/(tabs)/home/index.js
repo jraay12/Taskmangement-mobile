@@ -72,14 +72,11 @@ const Index = () => {
     //     title: todo,
     //     category: category,
     //   };
-
     //   await axios.post(
     //     `https://task-db-rosy.vercel.app/todos/${userId}`,
     //     todoData
     //   );
-
     //   await getUserTodos();
-
     //   setTodo("");
     //   setModalVisible(false);
     // } catch (error) {
@@ -93,14 +90,11 @@ const Index = () => {
     //   const response = await axios.get(
     //     `https://task-db-rosy.vercel.app/users/${userId}/todos`
     //   );
-
     //   const fetchedTodos = response.data.todos || [];
-
     //   // Filter todos based on the selected category
     //   const filteredTodos = fetchedTodos.filter(
     //     (todo) => todo.category === category
     //   );
-
     //   // Filter pending and completed todos separately
     //   const pending = filteredTodos.filter(
     //     (todo) => todo.status !== "completed"
@@ -108,7 +102,6 @@ const Index = () => {
     //   const completed = filteredTodos.filter(
     //     (todo) => todo.status === "completed"
     //   );
-
     //   setTodos(filteredTodos);
     //   setPendingTodos(pending);
     //   setCompletedTodos(completed);
@@ -244,7 +237,9 @@ const Index = () => {
           flexDirection: "row",
           alignItems: "center",
           gap: 12,
+          
         }}
+        
       >
         <Pressable
           onPress={() => {
@@ -595,6 +590,6 @@ const Index = () => {
   );
 };
 
+
 export default Index;
 
-const styles = StyleSheet.create({});

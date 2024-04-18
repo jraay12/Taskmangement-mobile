@@ -69,7 +69,7 @@ const Login = () => {
       Alert.alert("Success", "You have successfully logged in");
       setEmail("")
       setPassword("")
-      navigation.navigate("Profile");
+      navigation.navigate("Home");
     } catch (error) {
       Alert.alert("Error", "Invalid credentials or Credentials not yet");
     }
@@ -95,7 +95,7 @@ const Login = () => {
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
     >
       <View style={{ marginTop: 80 }}>
-        <Text style={{ fontSize: 16, fontWeight: "600", color: "#0066b2" }}>
+        <Text style={{ fontSize: 30, fontWeight: "900", color: "#0066b2" }}>
           Task Manager App
         </Text>
       </View>
