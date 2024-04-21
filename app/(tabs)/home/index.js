@@ -580,7 +580,6 @@ const Index = () => {
                 flexDirection: "row",
                 gap: 5,
                 backgroundColor: "#E0E0E0",
-                paddingVertical: 1,
                 height: 100,
                 borderRadius: 5,
                 marginTop: 20,
@@ -589,7 +588,6 @@ const Index = () => {
               <TextInput
                 style={{
                   color: "gray",
-                  marginVertical: 0,
                   width: 300,
                   padding: 10,
                   textAlignVertical: "top",
@@ -662,8 +660,8 @@ const Index = () => {
             <View style={{ width: "100%" }}>
               <Button title="Add Task" onPress={handleAddTask} />
             </View>
-            <View style={{ width: "100%" }}>
-              <Button title="Close" onPress={handleCloseModal} />
+            <View style={{ width: "100%", marginTop: 10 }}>
+              <Button title="Close" onPress={handleCloseModal} color={"red"}/>
             </View>
           </View>
         </Modal>
