@@ -54,11 +54,10 @@ const Index = () => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === "ios");
     setDate(currentDate);
-  
+
     // Close date picker after selection
     setShow(false);
   };
-  
 
   const showMode = (currentMode) => {
     setShow(!show);
@@ -95,6 +94,10 @@ const Index = () => {
   const handleModal = () => {
     setModalVisible(!isModalVisible);
     console.log(isModalVisible);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
   };
 
   const addTodo = async () => {
@@ -269,10 +272,10 @@ const Index = () => {
       category: categoryTask,
       dueDate: date,
     };
-  
+
     try {
       const response = await axios.post(
-        `http://192.168.1.6:8000/api/add-task`,
+        `http://192.168.1.41:8000/api/add-task`,
         data,
         {
           headers: {
@@ -281,21 +284,17 @@ const Index = () => {
           },
         }
       );
-  
+
       // Clear input fields and close modal
       setTitle("");
       setDescription("");
       setCategoryTask("");
       setDate(new Date()); // Reset date to current date
       setModalVisible(false);
-  
+
       // Show success message or perform any other action
-      handleFlashMessage(
-        "Task Added!",
-        "Task successfully added",
-        "success"
-      );
-  
+      handleFlashMessage("Task Added!", "Task successfully added", "success");
+
       return response.data;
     } catch (error) {
       if (error.response) {
@@ -303,7 +302,6 @@ const Index = () => {
       }
     }
   };
-  
 
   return (
     <>
@@ -559,7 +557,7 @@ const Index = () => {
                 alignItems: "center",
                 gap: 5,
                 backgroundColor: "#E0E0E0",
-                paddingVertical: 5,
+                paddingVertical: 1,
                 borderRadius: 5,
                 marginTop: 30,
               }}
@@ -567,36 +565,39 @@ const Index = () => {
               <TextInput
                 style={{
                   color: "gray",
-                  marginVertical: 10,
+                  marginVertical: 0,
                   width: 300,
-                  paddingLeft: 20,
+                  padding: 10,
                 }}
                 placeholder="Title"
                 value={title}
                 onChangeText={(text) => setTitle(text)}
+                multiline={true}
               />
             </View>
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
                 gap: 5,
                 backgroundColor: "#E0E0E0",
-                paddingVertical: 5,
+                paddingVertical: 1,
+                height: 100,
                 borderRadius: 5,
-                marginTop: 30,
+                marginTop: 20,
               }}
             >
               <TextInput
                 style={{
                   color: "gray",
-                  marginVertical: 10,
+                  marginVertical: 0,
                   width: 300,
-                  paddingLeft: 20,
+                  padding: 10,
+                  textAlignVertical: "top",
                 }}
                 placeholder="Description"
                 value={description}
                 onChangeText={(text) => setDescription(text)}
+                multiline={true}
               />
             </View>
             <Text
@@ -623,19 +624,21 @@ const Index = () => {
                 onPress={() => {
                   setCategoryTask("personal");
                 }}
+                color={categoryTask === "personal" ? "blue" : ""}
               />
               <Button
                 title="Work"
                 onPress={() => {
                   setCategoryTask("work");
                 }}
+                color={categoryTask === "work" ? "blue" : ""}
               />
             </View>
-            <View style={{ width: "100%", marginTop: 30 }}>
+            <View style={{ width: "100%", marginTop: 20 }}>
               <Text
                 style={{
                   width: "100%",
-                  marginTop: 20,
+                  marginTop: 10,
                   marginBottom: 20,
                   fontWeight: "900",
                 }}
@@ -659,6 +662,9 @@ const Index = () => {
             <View style={{ width: "100%" }}>
               <Button title="Add Task" onPress={handleAddTask} />
             </View>
+            <View style={{ width: "100%" }}>
+              <Button title="Close" onPress={handleCloseModal} />
+            </View>
           </View>
         </Modal>
       </View>
@@ -675,18 +681,19 @@ const styles = StyleSheet.create({
     display: "flex",
   },
   View: {
-    height: "100%",
-    width: "100%",
+    height: "60%",
+    width: "80%",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#EFF4F6",
     borderWidth: 1,
     borderRadius: 20,
-    padding: 30,
+    padding: 20,
+    margin: 50,
+    marginTop: 150,
   },
   text: {
-    fontSize: 20,
+    fontSize: 25,
     color: "blue",
-    marginTop: 10,
   },
   button: {
     margin: 20,
