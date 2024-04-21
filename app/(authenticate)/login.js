@@ -36,7 +36,6 @@ const Login = () => {
     checkLoginStatus();
   }, []);
 
-  
   const handleLogin = async () => {
     const user = {
       email: email,
@@ -49,7 +48,6 @@ const Login = () => {
         user
       );
       const token = response.data.token;
-      
 
       if (!token) {
         Alert.alert("Error", "Token is empty");
@@ -58,17 +56,19 @@ const Login = () => {
 
       const userId = response.data.data.userId;
       const firstName = response.data.data.firstname;
-      
-      const lastName = response.data.data.lastname
-      
+      const email = response.data.data.email;
+
+      const lastName = response.data.data.lastname;
+
       await AsyncStorage.setItem("authToken", token);
       await AsyncStorage.setItem("userId", userId);
-      await AsyncStorage.setItem("userName", firstName)
-      await AsyncStorage.setItem("userLastname", lastName)
+      await AsyncStorage.setItem("userName", firstName);
+      await AsyncStorage.setItem("userLastname", lastName);
+      await AsyncStorage.setItem("userEmail", email);
 
       Alert.alert("Success", "You have successfully logged in");
-      setEmail("")
-      setPassword("")
+      setEmail("");
+      setPassword("");
       navigation.navigate("Home");
     } catch (error) {
       Alert.alert("Error", "Invalid credentials or Credentials not yet");
@@ -185,8 +185,6 @@ const Login = () => {
                 backgroundColor: "#6699CC",
                 padding: 15,
                 borderRadius: 6,
-                
-                
               }}
             >
               <Text

@@ -36,7 +36,7 @@ import { useIsFocused } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Index = () => {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState({});
   const today = moment().format("MMM Do");
   const [isModalVisible, setModalVisible] = useState(false);
   const [category, setCategory] = useState("All");
@@ -54,7 +54,6 @@ const Index = () => {
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
     setDate(currentDate);
 
     // Close date picker after selection
@@ -126,19 +125,19 @@ const Index = () => {
     try {
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("authToken");
-
+      const email = await AsyncStorage.getItem("userEmail");
       const response = await axios.get(
-        `http://192.168.1.6:8000/api/user-task/${userId}`,
+        `http://192.168.1.6:8000/api/user-task/${userId}/${email}`,
         {
           headers: {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      
+
+      const userTask = response?.data?.data;
+      setTodo(userTask);
+
       // const fetchedTodos = response.data.todos || [];
       // Filter todos based on the selected category
       // const filteredTodos = fetchedTodos.filter(
@@ -151,7 +150,7 @@ const Index = () => {
       // const completed = filteredTodos.filter(
       //   (todo) => todo.status === "completed"
       // );
-      setTodos(filteredTodos);
+      // setTodos(filteredTodos);
       // setPendingTodos(pending);
       // setCompletedTodos(completed);
     } catch (error) {
@@ -402,15 +401,13 @@ const Index = () => {
         </Pressable>
       </View>
 
-      <ScrollView
-        style={{ flex: 1, backgroundColor: "white", position: "relative" }}
-      >
-        <View style={{ padding: 10 }}>
-          {todos?.length > 0 ? (
+      <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
+        <View style={{ padding: 10, backgroundColor: "white" }}>
+          {todo?.length > 0 ? (
             <View>
-              {pendingTodos?.length > 0 ? <Text>Task to do! {today}</Text> : ""}
+              {todo?.length > 0 ? <Text>Task to do! {today}</Text> : ""}
 
-              {pendingTodos?.map((item, index) => (
+              {todo?.map((item, index) => (
                 <Pressable
                   style={{
                     backgroundColor: "#E0E0E0",
@@ -428,7 +425,7 @@ const Index = () => {
                     }}
                   >
                     <Entypo
-                      onPress={() => markTodoAsCompleted(item?._id)}
+                      onPress={() => markTodoAsCompleted(item?.user_id)}
                       name="circle"
                       size={18}
                       color="black"
@@ -444,7 +441,7 @@ const Index = () => {
                 </Pressable>
               ))}
 
-              {completedTodos?.length > 0 ? (
+              {todos?.length > 0 ? (
                 <View>
                   <View
                     style={{
@@ -552,142 +549,134 @@ const Index = () => {
           )}
         </View>
       </ScrollView>
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
-      >
-        <KeyboardAvoidingView>
-          <View style={styles.container}>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={isModalVisible}
-              onRequestClose={() => {
-                console.warn("closed");
+
+      <View style={styles.container}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => {
+            console.warn("closed");
+          }}
+        >
+          <View style={styles.View}>
+            <Text style={styles.text}>ADD TASK</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 5,
+                backgroundColor: "#E0E0E0",
+                paddingVertical: 1,
+                borderRadius: 5,
+                marginTop: 30,
               }}
             >
-              <View style={styles.View}>
-                <Text style={styles.text}>ADD TASK</Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 5,
-                    backgroundColor: "#E0E0E0",
-                    paddingVertical: 1,
-                    borderRadius: 5,
-                    marginTop: 30,
-                  }}
-                >
-                  <TextInput
-                    style={{
-                      color: "gray",
-                      marginVertical: 0,
-                      width: 300,
-                      padding: 10,
-                    }}
-                    placeholder="Title"
-                    value={title}
-                    onChangeText={(text) => setTitle(text)}
-                    multiline={true}
-                  />
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 5,
-                    backgroundColor: "#E0E0E0",
-                    height: 100,
-                    borderRadius: 5,
-                    marginTop: 20,
-                  }}
-                >
-                  <TextInput
-                    style={{
-                      color: "gray",
-                      width: 300,
-                      padding: 10,
-                      textAlignVertical: "top",
-                    }}
-                    placeholder="Description"
-                    value={description}
-                    onChangeText={(text) => setDescription(text)}
-                    multiline={true}
-                  />
-                </View>
-                <Text
-                  style={{
-                    width: "100%",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    fontWeight: "900",
-                  }}
-                >
-                  Category
-                </Text>
+              <TextInput
+                style={{
+                  color: "gray",
+                  marginVertical: 0,
+                  width: 300,
+                  padding: 10,
+                }}
+                placeholder="Title"
+                value={title}
+                onChangeText={(text) => setTitle(text)}
+                multiline={true}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 5,
+                backgroundColor: "#E0E0E0",
+                height: 100,
+                borderRadius: 5,
+                marginTop: 20,
+              }}
+            >
+              <TextInput
+                style={{
+                  color: "gray",
+                  width: 300,
+                  padding: 10,
+                  textAlignVertical: "top",
+                }}
+                placeholder="Description"
+                value={description}
+                onChangeText={(text) => setDescription(text)}
+                multiline={true}
+              />
+            </View>
+            <Text
+              style={{
+                width: "100%",
+                marginTop: 20,
+                marginBottom: 20,
+                fontWeight: "900",
+              }}
+            >
+              Category
+            </Text>
 
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 20,
-                    width: "100%",
-                  }}
-                >
-                  <Button
-                    title="Personal"
-                    onPress={() => {
-                      setCategoryTask("personal");
-                    }}
-                    color={categoryTask === "personal" ? "blue" : ""}
-                  />
-                  <Button
-                    title="Work"
-                    onPress={() => {
-                      setCategoryTask("work");
-                    }}
-                    color={categoryTask === "work" ? "blue" : ""}
-                  />
-                </View>
-                <View style={{ width: "100%", marginTop: 20 }}>
-                  <Text
-                    style={{
-                      width: "100%",
-                      marginTop: 10,
-                      marginBottom: 20,
-                      fontWeight: "900",
-                    }}
-                  >
-                    Due Date
-                  </Text>
-                  <Button onPress={showDatepicker} title="Select due date" />
-                </View>
-                {show && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={date}
-                    mode={mode}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
-                  />
-                )}
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 20,
+                width: "100%",
+              }}
+            >
+              <Button
+                title="Personal"
+                onPress={() => {
+                  setCategoryTask("personal");
+                }}
+                color={categoryTask === "personal" ? "blue" : ""}
+              />
+              <Button
+                title="Work"
+                onPress={() => {
+                  setCategoryTask("work");
+                }}
+                color={categoryTask === "work" ? "blue" : ""}
+              />
+            </View>
+            <View style={{ width: "100%", marginTop: 20 }}>
+              <Text
+                style={{
+                  width: "100%",
+                  marginTop: 10,
+                  marginBottom: 20,
+                  fontWeight: "900",
+                }}
+              >
+                Due Date
+              </Text>
+              <Button onPress={showDatepicker} title="Select due date" />
+            </View>
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            )}
 
-                <View style={{ flexGrow: 1 }}></View>
-                <View style={{ width: "100%" }}>
-                  <Button title="Add Task" onPress={handleAddTask} />
-                </View>
-                <View style={{ width: "100%", marginTop: 10 }}>
-                  <Button
-                    title="Close"
-                    onPress={handleCloseModal}
-                    color={"red"}
-                  />
-                </View>
-              </View>
-            </Modal>
+            <View style={{ flexGrow: 1 }}></View>
+            <View style={{ width: "100%" }}>
+              <Button title="Add Task" onPress={handleAddTask} />
+            </View>
+            <View style={{ width: "100%", marginTop: 10 }}>
+              <Button title="Close" onPress={handleCloseModal} color={"red"} />
+            </View>
           </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+        </Modal>
+      </View>
+
       <FlashMessage ref={flashMessage} />
     </>
   );
