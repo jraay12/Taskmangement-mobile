@@ -7,6 +7,8 @@ import {
   Image,
   ScrollView,
   TextInput,
+  Button,
+  Modal,
 } from "react-native";
 import {
   AntDesign,
@@ -29,6 +31,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { firstTimeLogin } from "../../(authenticate)/login";
 import { useRoute } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Index = () => {
   const [todos, setTodos] = useState([]);
@@ -40,6 +43,31 @@ const Index = () => {
   const [completedTodos, setCompletedTodos] = useState([]);
   const [hasLoggedInOnce, setHasLoggedInOnce] = useState(false);
   const [marked, setMarked] = useState(false);
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [categoryTask, setCategoryTask] = useState("");
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === "ios");
+    setDate(currentDate);
+  
+    // Close date picker after selection
+    setShow(false);
+  };
+  
+
+  const showMode = (currentMode) => {
+    setShow(!show);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
 
   const suggestions = [
     {
@@ -64,6 +92,11 @@ const Index = () => {
     },
   ];
 
+  const handleModal = () => {
+    setModalVisible(!isModalVisible);
+    console.log(isModalVisible);
+  };
+
   const addTodo = async () => {
     // try {
     //   const userId = await AsyncStorage.getItem("userId"); // Retrieve userId from AsyncStorage
@@ -73,7 +106,7 @@ const Index = () => {
     //     category: category,
     //   };
     //   await axios.post(
-    //     `https://task-db-rosy.vercel.app/todos/${userId}`,
+    //     https://task-db-rosy.vercel.app/todos/${userId},
     //     todoData
     //   );
     //   await getUserTodos();
@@ -88,7 +121,7 @@ const Index = () => {
     // try {
     //   const userId = await AsyncStorage.getItem("userId");
     //   const response = await axios.get(
-    //     `https://task-db-rosy.vercel.app/users/${userId}/todos`
+    //     https://task-db-rosy.vercel.app/users/${userId}/todos
     //   );
     //   const fetchedTodos = response.data.todos || [];
     //   // Filter todos based on the selected category
@@ -114,8 +147,6 @@ const Index = () => {
     const getUserData = async () => {
       try {
         const userId = await AsyncStorage.getItem("userId");
-
-        console.log("User ID:", userId);
       } catch (error) {
         console.error("Error retrieving user data:", error);
       }
@@ -153,26 +184,26 @@ const Index = () => {
   }, [isFocused, category, marked, isModalVisible]);
 
   const markTodoAsCompleted = async (todoId) => {
-    try {
-      setMarked(true);
-      await axios.patch(
-        `https://task-db-rosy.vercel.app/todos/${todoId}/complete`
-      );
-      await getUserTodos();
-      handleFlashMessage(
-        "Task marked as completed!",
-        "Task successfully marked as completed",
-        "success"
-      );
-    } catch (error) {
-      console.log("error", error);
-    }
+    // try {
+    //   setMarked(true);
+    //   await axios.patch(
+    //     https://task-db-rosy.vercel.app/todos/${todoId}/complete
+    //   );
+    //   await getUserTodos();
+    //   handleFlashMessage(
+    //     "Task marked as completed!",
+    //     "Task successfully marked as completed",
+    //     "success"
+    //   );
+    // } catch (error) {
+    //   console.log("error", error);
+    // }
   };
 
   const handleDeleteTask = async (todoIdDelete) => {
     // try {
     //   await axios.delete(
-    //     `https://task-db-rosy.vercel.app/todos/${todoIdDelete}`
+    //     https://task-db-rosy.vercel.app/todos/${todoIdDelete}
     //   );
     //   await getUserTodos();
     //   handleFlashMessage(
@@ -228,6 +259,52 @@ const Index = () => {
     }
   };
 
+  const handleAddTask = async () => {
+    const userId = await AsyncStorage.getItem("userId");
+    const token = await AsyncStorage.getItem("authToken");
+    const data = {
+      user_id: userId,
+      title: title,
+      description: description,
+      category: categoryTask,
+      dueDate: date,
+    };
+  
+    try {
+      const response = await axios.post(
+        `http://192.168.1.6:8000/api/add-task`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      // Clear input fields and close modal
+      setTitle("");
+      setDescription("");
+      setCategoryTask("");
+      setDate(new Date()); // Reset date to current date
+      setModalVisible(false);
+  
+      // Show success message or perform any other action
+      handleFlashMessage(
+        "Task Added!",
+        "Task successfully added",
+        "success"
+      );
+  
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        console.log("Error response data:", error.response.data);
+      }
+    }
+  };
+  
+
   return (
     <>
       <View
@@ -237,9 +314,7 @@ const Index = () => {
           flexDirection: "row",
           alignItems: "center",
           gap: 12,
-          
         }}
-        
       >
         <Pressable
           onPress={() => {
@@ -459,10 +534,7 @@ const Index = () => {
               >
                 No Tasks for today! Add a task
               </Text>
-              <Pressable
-                onPress={() => setModalVisible(!isModalVisible)}
-                style={{ marginTop: 15 }}
-              >
+              <Pressable onPress={handleModal} style={{ marginTop: 15 }}>
                 <AntDesign name="pluscircle" size={30} color="#007FFF" />
               </Pressable>
             </View>
@@ -470,126 +542,156 @@ const Index = () => {
         </View>
       </ScrollView>
 
-      <BottomModal
-        onBackdropPress={() => setModalVisible(!isModalVisible)}
-        onHardwareBackpress={() => setModalVisible(!isModalVisible)}
-        swipeDirection={["up", "down"]}
-        swipeThreshold={200}
-        modalTitle={<ModalTitle title="Add a Task" />}
-        modalAnimation={
-          new SlideAnimation({
-            slideFrom: "bottom",
-          })
-        }
-        visible={isModalVisible}
-        onTouchOutside={() => setModalVisible(!isModalVisible)}
-      >
-        <ModalContent style={{ width: "100%", height: 300 }}>
-          <View
-            style={{
-              marginVertical: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <TextInput
-              value={todo}
-              onChangeText={(text) => setTodo(text)}
-              placeholder="Input a new task here"
+      <View style={styles.container}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => {
+            console.warn("closed");
+          }}
+        >
+          <View style={styles.View}>
+            <Text style={styles.text}>Add Task</Text>
+            <View
               style={{
-                padding: 10,
-                borderColor: "#E0E0E0",
-                borderWidth: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 5,
+                backgroundColor: "#E0E0E0",
+                paddingVertical: 5,
                 borderRadius: 5,
-                flex: 1,
-              }}
-            />
-            <Ionicons onPress={addTodo} name="send" size={24} color="#007FFF" />
-          </View>
-
-          <Text>Choose Category</Text>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-              marginVertical: 10,
-            }}
-          >
-            <Pressable
-              onPress={() => setCategory("All")}
-              style={{
-                borderColor: "#E0E0E0",
-                paddingHorizontal: 10,
-                paddingVertical: 4,
-                borderWidth: 1,
-                borderRadius: 25,
+                marginTop: 30,
               }}
             >
-              <Text>All</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setCategory("Work")}
-              style={{
-                borderColor: "#E0E0E0",
-                paddingHorizontal: 10,
-                paddingVertical: 4,
-                borderWidth: 1,
-                borderRadius: 25,
-              }}
-            >
-              <Text>Work</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setCategory("Personal")}
-              style={{
-                borderColor: "#E0E0E0",
-                paddingHorizontal: 10,
-                paddingVertical: 4,
-                borderWidth: 1,
-                borderRadius: 25,
-              }}
-            >
-              <Text>Personal</Text>
-            </Pressable>
-          </View>
-
-          <Text>Some Suggestions</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-              flexWrap: "wrap",
-              marginVertical: 10,
-            }}
-          >
-            {suggestions?.map((item, index) => (
-              <Pressable
-                key={item.id}
-                onPress={() => setTodo(item?.todo)}
+              <TextInput
                 style={{
-                  backgroundColor: "#F0F8FF",
-                  paddingHorizontal: 10,
-                  paddingVertical: 4,
-                  borderRadius: 25,
+                  color: "gray",
+                  marginVertical: 10,
+                  width: 300,
+                  paddingLeft: 20,
+                }}
+                placeholder="Title"
+                value={title}
+                onChangeText={(text) => setTitle(text)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 5,
+                backgroundColor: "#E0E0E0",
+                paddingVertical: 5,
+                borderRadius: 5,
+                marginTop: 30,
+              }}
+            >
+              <TextInput
+                style={{
+                  color: "gray",
+                  marginVertical: 10,
+                  width: 300,
+                  paddingLeft: 20,
+                }}
+                placeholder="Description"
+                value={description}
+                onChangeText={(text) => setDescription(text)}
+              />
+            </View>
+            <Text
+              style={{
+                width: "100%",
+                marginTop: 20,
+                marginBottom: 20,
+                fontWeight: "900",
+              }}
+            >
+              Category
+            </Text>
+
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 20,
+                width: "100%",
+              }}
+            >
+              <Button
+                title="Personal"
+                onPress={() => {
+                  setCategoryTask("personal");
+                }}
+              />
+              <Button
+                title="Work"
+                onPress={() => {
+                  setCategoryTask("work");
+                }}
+              />
+            </View>
+            <View style={{ width: "100%", marginTop: 30 }}>
+              <Text
+                style={{
+                  width: "100%",
+                  marginTop: 20,
+                  marginBottom: 20,
+                  fontWeight: "900",
                 }}
               >
-                <Text style={{ textAlign: "center" }} key={index}>
-                  {item?.todo}
-                </Text>
-              </Pressable>
-            ))}
+                Due Date
+              </Text>
+              <Button onPress={showDatepicker} title="Select due date" />
+            </View>
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            )}
+
+            <View style={{ flexGrow: 1 }}></View>
+            <View style={{ width: "100%" }}>
+              <Button title="Add Task" onPress={handleAddTask} />
+            </View>
           </View>
-        </ModalContent>
-      </BottomModal>
+        </Modal>
+      </View>
       <FlashMessage ref={flashMessage} />
     </>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    display: "flex",
+  },
+  View: {
+    height: "100%",
+    width: "100%",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 30,
+  },
+  text: {
+    fontSize: 20,
+    color: "blue",
+    marginTop: 10,
+  },
+  button: {
+    margin: 20,
+    width: 200,
+  },
+});
 
 export default Index;
-

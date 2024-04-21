@@ -33,7 +33,7 @@ const Register = () => {
     };
 
     axios
-      .post("http://192.168.1.6:8000/api/create-user", user)
+      .post("http://localhost:8000/api/create-user", user)
       .then((response) => {
         console.log(response);
         Alert.alert(
