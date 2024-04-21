@@ -9,6 +9,8 @@ import {
   TextInput,
   Button,
   Modal,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from "react-native";
 import {
   AntDesign,
@@ -121,29 +123,40 @@ const Index = () => {
   };
 
   const getUserTodos = async () => {
-    // try {
-    //   const userId = await AsyncStorage.getItem("userId");
-    //   const response = await axios.get(
-    //     https://task-db-rosy.vercel.app/users/${userId}/todos
-    //   );
-    //   const fetchedTodos = response.data.todos || [];
-    //   // Filter todos based on the selected category
-    //   const filteredTodos = fetchedTodos.filter(
-    //     (todo) => todo.category === category
-    //   );
-    //   // Filter pending and completed todos separately
-    //   const pending = filteredTodos.filter(
-    //     (todo) => todo.status !== "completed"
-    //   );
-    //   const completed = filteredTodos.filter(
-    //     (todo) => todo.status === "completed"
-    //   );
-    //   setTodos(filteredTodos);
-    //   setPendingTodos(pending);
-    //   setCompletedTodos(completed);
-    // } catch (error) {
-    //   console.log("error", error);
-    // }
+    try {
+      const userId = await AsyncStorage.getItem("userId");
+      const token = await AsyncStorage.getItem("authToken");
+
+      const response = await axios.get(
+        `http://192.168.1.6:8000/api/user-task/${userId}`,
+        {
+          headers: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        }
+      );
+      
+      // const fetchedTodos = response.data.todos || [];
+      // Filter todos based on the selected category
+      // const filteredTodos = fetchedTodos.filter(
+      //   (todo) => todo.category === category
+      // );
+      // Filter pending and completed todos separately
+      // const pending = filteredTodos.filter(
+      //   (todo) => todo.status !== "completed"
+      // );
+      // const completed = filteredTodos.filter(
+      //   (todo) => todo.status === "completed"
+      // );
+      setTodos(filteredTodos);
+      // setPendingTodos(pending);
+      // setCompletedTodos(completed);
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   useEffect(() => {
@@ -275,7 +288,7 @@ const Index = () => {
 
     try {
       const response = await axios.post(
-        `http://192.168.1.41:8000/api/add-task`,
+        `http://192.168.1.6:8000/api/add-task`,
         data,
         {
           headers: {
@@ -539,133 +552,142 @@ const Index = () => {
           )}
         </View>
       </ScrollView>
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
+      >
+        <KeyboardAvoidingView>
+          <View style={styles.container}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={isModalVisible}
+              onRequestClose={() => {
+                console.warn("closed");
+              }}
+            >
+              <View style={styles.View}>
+                <Text style={styles.text}>ADD TASK</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 5,
+                    backgroundColor: "#E0E0E0",
+                    paddingVertical: 1,
+                    borderRadius: 5,
+                    marginTop: 30,
+                  }}
+                >
+                  <TextInput
+                    style={{
+                      color: "gray",
+                      marginVertical: 0,
+                      width: 300,
+                      padding: 10,
+                    }}
+                    placeholder="Title"
+                    value={title}
+                    onChangeText={(text) => setTitle(text)}
+                    multiline={true}
+                  />
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 5,
+                    backgroundColor: "#E0E0E0",
+                    height: 100,
+                    borderRadius: 5,
+                    marginTop: 20,
+                  }}
+                >
+                  <TextInput
+                    style={{
+                      color: "gray",
+                      width: 300,
+                      padding: 10,
+                      textAlignVertical: "top",
+                    }}
+                    placeholder="Description"
+                    value={description}
+                    onChangeText={(text) => setDescription(text)}
+                    multiline={true}
+                  />
+                </View>
+                <Text
+                  style={{
+                    width: "100%",
+                    marginTop: 20,
+                    marginBottom: 20,
+                    fontWeight: "900",
+                  }}
+                >
+                  Category
+                </Text>
 
-      <View style={styles.container}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => {
-            console.warn("closed");
-          }}
-        >
-          <View style={styles.View}>
-            <Text style={styles.text}>Add Task</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                backgroundColor: "#E0E0E0",
-                paddingVertical: 1,
-                borderRadius: 5,
-                marginTop: 30,
-              }}
-            >
-              <TextInput
-                style={{
-                  color: "gray",
-                  marginVertical: 0,
-                  width: 300,
-                  padding: 10,
-                }}
-                placeholder="Title"
-                value={title}
-                onChangeText={(text) => setTitle(text)}
-                multiline={true}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 5,
-                backgroundColor: "#E0E0E0",
-                height: 100,
-                borderRadius: 5,
-                marginTop: 20,
-              }}
-            >
-              <TextInput
-                style={{
-                  color: "gray",
-                  width: 300,
-                  padding: 10,
-                  textAlignVertical: "top",
-                }}
-                placeholder="Description"
-                value={description}
-                onChangeText={(text) => setDescription(text)}
-                multiline={true}
-              />
-            </View>
-            <Text
-              style={{
-                width: "100%",
-                marginTop: 20,
-                marginBottom: 20,
-                fontWeight: "900",
-              }}
-            >
-              Category
-            </Text>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 20,
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    title="Personal"
+                    onPress={() => {
+                      setCategoryTask("personal");
+                    }}
+                    color={categoryTask === "personal" ? "blue" : ""}
+                  />
+                  <Button
+                    title="Work"
+                    onPress={() => {
+                      setCategoryTask("work");
+                    }}
+                    color={categoryTask === "work" ? "blue" : ""}
+                  />
+                </View>
+                <View style={{ width: "100%", marginTop: 20 }}>
+                  <Text
+                    style={{
+                      width: "100%",
+                      marginTop: 10,
+                      marginBottom: 20,
+                      fontWeight: "900",
+                    }}
+                  >
+                    Due Date
+                  </Text>
+                  <Button onPress={showDatepicker} title="Select due date" />
+                </View>
+                {show && (
+                  <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    mode={mode}
+                    is24Hour={true}
+                    display="default"
+                    onChange={onChange}
+                  />
+                )}
 
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 20,
-                width: "100%",
-              }}
-            >
-              <Button
-                title="Personal"
-                onPress={() => {
-                  setCategoryTask("personal");
-                }}
-                color={categoryTask === "personal" ? "blue" : ""}
-              />
-              <Button
-                title="Work"
-                onPress={() => {
-                  setCategoryTask("work");
-                }}
-                color={categoryTask === "work" ? "blue" : ""}
-              />
-            </View>
-            <View style={{ width: "100%", marginTop: 20 }}>
-              <Text
-                style={{
-                  width: "100%",
-                  marginTop: 10,
-                  marginBottom: 20,
-                  fontWeight: "900",
-                }}
-              >
-                Due Date
-              </Text>
-              <Button onPress={showDatepicker} title="Select due date" />
-            </View>
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                display="default"
-                onChange={onChange}
-              />
-            )}
-
-            <View style={{ flexGrow: 1 }}></View>
-            <View style={{ width: "100%" }}>
-              <Button title="Add Task" onPress={handleAddTask} />
-            </View>
-            <View style={{ width: "100%", marginTop: 10 }}>
-              <Button title="Close" onPress={handleCloseModal} color={"red"}/>
-            </View>
+                <View style={{ flexGrow: 1 }}></View>
+                <View style={{ width: "100%" }}>
+                  <Button title="Add Task" onPress={handleAddTask} />
+                </View>
+                <View style={{ width: "100%", marginTop: 10 }}>
+                  <Button
+                    title="Close"
+                    onPress={handleCloseModal}
+                    color={"red"}
+                  />
+                </View>
+              </View>
+            </Modal>
           </View>
-        </Modal>
-      </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
       <FlashMessage ref={flashMessage} />
     </>
   );
@@ -677,21 +699,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     display: "flex",
+    overflow: "scroll",
   },
   View: {
-    height: "60%",
-    width: "80%",
+    height: "100%",
+    width: "100%",
     alignItems: "center",
     backgroundColor: "#EFF4F6",
     borderWidth: 1,
-    borderRadius: 20,
+
     padding: 20,
-    margin: 50,
-    marginTop: 150,
   },
   text: {
     fontSize: 25,
     color: "blue",
+    fontWeight: "900",
   },
   button: {
     margin: 20,

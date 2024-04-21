@@ -58,7 +58,7 @@ export default function Layout() {
             headerBackTitle: "HELLO",
             headerLeft: () => (
               <Pressable onPress={toggleSidebar}>
-                <Text style={{ marginLeft: 10, fontSize: 20 }}>&#9776;</Text>
+                <Text style={{ marginLeft: 10, fontSize: 30 }}>&#9776;</Text>
               </Pressable>
             ),
           }}
@@ -79,7 +79,7 @@ export default function Layout() {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontSize: 20, color:"#FFFFFF"  }}>TaskCore</Text>
+          <Text style={{ fontSize: 20, fontWeight: "900"  }}>TaskCore</Text>
           <Pressable onPress={toggleSidebar}>
             <Text style={styles.closeButton}>&#9776;</Text>
           </Pressable>
@@ -136,12 +136,12 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     width: 200,
-    backgroundColor: "#6699CC",
+    backgroundColor: "#FFFFFF",
     padding: 20,
     marginTop: 40,
+    shadowColor: "black"
   },
   closeButton: {
-    color: "#FFFFFF",
     textAlign: "right",
     fontSize: 20,
     
