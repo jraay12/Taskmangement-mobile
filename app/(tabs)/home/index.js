@@ -37,6 +37,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Index = () => {
   const [todos, setTodos] = useState({});
+  const [teams, setTeams] = useState({});
+  const [team, setTeam] = useState("")
   const today = moment().format("MMM Do");
   const [isModalVisible, setModalVisible] = useState(false);
   const [category, setCategory] = useState("All");
@@ -127,36 +129,33 @@ const Index = () => {
       const token = await AsyncStorage.getItem("authToken");
       const email = await AsyncStorage.getItem("userEmail");
       const response = await axios.get(
-        `http://192.168.1.6:8000/api/user-task/${userId}/${email}`,
+        `http://192.168.1.41:8000/api/user-task/${userId}/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
+  
       const userTask = response?.data?.data;
       setTodo(userTask);
-
-      // const fetchedTodos = response.data.todos || [];
+  
       // Filter todos based on the selected category
-      // const filteredTodos = fetchedTodos.filter(
-      //   (todo) => todo.category === category
-      // );
+      const filteredTodos = userTask.filter((todo) => todo.category === category);
+  
       // Filter pending and completed todos separately
-      // const pending = filteredTodos.filter(
-      //   (todo) => todo.status !== "completed"
-      // );
-      // const completed = filteredTodos.filter(
-      //   (todo) => todo.status === "completed"
-      // );
-      // setTodos(filteredTodos);
-      // setPendingTodos(pending);
-      // setCompletedTodos(completed);
+      const pending = filteredTodos.filter((todo) => todo.status !== "completed");
+      const completed = filteredTodos.filter((todo) => todo.status === "completed");
+  
+      // Set state with filtered todos
+      setTodos(filteredTodos);
+      setPendingTodos(pending);
+      setCompletedTodos(completed);
     } catch (error) {
       console.log("error", error);
     }
   };
+  
 
   useEffect(() => {
     const getUserData = async () => {
@@ -190,6 +189,27 @@ const Index = () => {
     }
   }, []);
 
+  const getUserTeams = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      const email = await AsyncStorage.getItem("userEmail");
+      const response = await axios.get(
+        `http://192.168.1.41:8000/api/user-team/${email}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      const userTeam = response?.data;
+      setTeam(userTeam);
+
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -197,6 +217,13 @@ const Index = () => {
       getUserTodos();
     }
   }, [isFocused, category, marked, isModalVisible]);
+
+  useEffect(() => {
+    if (isFocused) {
+      getUserTeams();
+    }
+  }, []);
+
 
   const markTodoAsCompleted = async (todoId) => {
     // try {
@@ -287,7 +314,7 @@ const Index = () => {
 
     try {
       const response = await axios.post(
-        `http://192.168.1.6:8000/api/add-task`,
+        `http://192.168.1.41:8000/api/add-task`,
         data,
         {
           headers: {
@@ -352,7 +379,7 @@ const Index = () => {
         <Pressable
           onPress={() => {
             setCategory("Work");
-            getUserTodos();
+            getUserTeams();
           }}
           style={{
             backgroundColor: category === "Work" ? "#7CB9E8" : "#FFFFFF",
