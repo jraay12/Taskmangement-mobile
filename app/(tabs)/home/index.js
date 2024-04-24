@@ -209,20 +209,16 @@ const Index = () => {
       console.log("error", error);
     }
   };
+  console.log(team.teams)
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (isFocused) {
       getUserTodos();
-    }
-  }, [isFocused, category, marked, isModalVisible]);
-
-  useEffect(() => {
-    if (isFocused) {
       getUserTeams();
     }
-  }, []);
+  }, [isFocused, category, marked, isModalVisible]);
 
 
   const markTodoAsCompleted = async (todoId) => {
@@ -349,33 +345,9 @@ const Index = () => {
           marginHorizontal: 10,
           marginVertical: 10,
           flexDirection: "row",
-          alignItems: "center",
           gap: 12,
         }}
       >
-        <Pressable
-          onPress={() => {
-            setCategory("All");
-            getUserTodos();
-          }}
-          style={{
-            backgroundColor: category === "All" ? "#7CB9E8" : "#FFFFFF",
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: category === "All" ? "white" : "black",
-              textAlign: "center",
-            }}
-          >
-            All
-          </Text>
-        </Pressable>
         <Pressable
           onPress={() => {
             setCategory("Work");
@@ -430,11 +402,11 @@ const Index = () => {
 
       <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
         <View style={{ padding: 10, backgroundColor: "white" }}>
-          {todo?.length > 0 ? (
+          {team.teams?.length > 0 ? (
             <View>
-              {todo?.length > 0 ? <Text>Task to do! {today}</Text> : ""}
+              {team.teams?.length > 0 ? <Text>Your Teams</Text> : ""}
 
-              {todo?.map((item, index) => (
+              {team.teams?.map((item, index) => (
                 <Pressable
                   style={{
                     backgroundColor: "#E0E0E0",
@@ -457,7 +429,7 @@ const Index = () => {
                       size={18}
                       color="black"
                     />
-                    <Text style={{ flex: 1 }}>{item?.title}</Text>
+                    <Text style={{ flex: 1 }}>{item?.team_name}</Text>
                     <Feather
                       onPress={() => handleDeleteTask(item?._id)}
                       name="flag"
@@ -467,80 +439,7 @@ const Index = () => {
                   </View>
                 </Pressable>
               ))}
-
-              {todos?.length > 0 ? (
-                <View>
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      alignItems: "center",
-                      margin: 10,
-                    }}
-                  >
-                    <Image
-                      style={{ width: 200, height: 200, resizeMode: "contain" }}
-                      source={{
-                        uri: "https://cdn-icons-png.flaticon.com/128/6784/6784655.png",
-                      }}
-                    />
-                  </View>
-
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 5,
-                      marginVertical: 10,
-                    }}
-                  >
-                    <Text>Completed Tasks</Text>
-                    <MaterialIcons
-                      name="arrow-drop-down"
-                      size={24}
-                      color="black"
-                    />
-                  </View>
-
-                  {completedTodos?.map((item, index) => (
-                    <Pressable
-                      style={{
-                        backgroundColor: "#E0E0E0",
-                        padding: 10,
-                        borderRadius: 7,
-                        marginVertical: 10,
-                      }}
-                      key={index}
-                    >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 10,
-                        }}
-                      >
-                        <FontAwesome name="circle" size={18} color="gray" />
-                        <Text
-                          style={{
-                            flex: 1,
-                            textDecorationLine: "line-through",
-                            color: "gray",
-                          }}
-                        >
-                          {item?.title}
-                        </Text>
-                        <Feather
-                          onPress={() => handleDeleteTask(item?._id)}
-                          name="flag"
-                          size={20}
-                          color="gray"
-                        />
-                      </View>
-                    </Pressable>
-                  ))}
-                </View>
-              ) : (
-                ""
-              )}
+              
             </View>
           ) : (
             <View
