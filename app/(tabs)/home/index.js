@@ -41,7 +41,7 @@ const Index = () => {
   const [team, setTeam] = useState("")
   const today = moment().format("MMM Do");
   const [isModalVisible, setModalVisible] = useState(false);
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("Work");
   const [todo, setTodo] = useState("");
   const [pendingTodos, setPendingTodos] = useState([]);
   const [completedTodos, setCompletedTodos] = useState([]);
@@ -209,7 +209,6 @@ const Index = () => {
       console.log("error", error);
     }
   };
-  console.log(team.teams)
 
   const isFocused = useIsFocused();
 
@@ -395,9 +394,6 @@ const Index = () => {
             Personal
           </Text>
         </Pressable>
-        <Pressable onPress={() => setModalVisible(!isModalVisible)}>
-          <AntDesign name="pluscircle" size={30} color="#007FFF" />
-        </Pressable>
       </View>
 
       <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
@@ -466,7 +462,7 @@ const Index = () => {
                   textAlign: "center",
                 }}
               >
-                No Tasks for today! Add a task
+                No Teams for today!
               </Text>
               <Pressable onPress={handleModal} style={{ marginTop: 15 }}>
                 <AntDesign name="pluscircle" size={30} color="#007FFF" />
@@ -476,7 +472,7 @@ const Index = () => {
         </View>
       </ScrollView>
 
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <Modal
           animationType="slide"
           transparent={true}
@@ -599,11 +595,11 @@ const Index = () => {
             <View style={{ width: "100%", marginTop: 10 }}>
               <Button title="Close" onPress={handleCloseModal} color={"red"} />
             </View>
-          </View>
-        </Modal>
-      </View>
+          </View> */}
+        {/* </Modal>
+      </View> */}
 
-      <FlashMessage ref={flashMessage} />
+      {/* <FlashMessage ref={flashMessage} /> */}
     </>
   );
 };
