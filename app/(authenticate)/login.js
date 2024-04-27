@@ -44,7 +44,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.41:8000/api/login",
+        "http://192.168.1.6:8000/api/login",
         user
       );
       const token = response.data.token;

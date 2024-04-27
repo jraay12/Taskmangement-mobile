@@ -12,6 +12,8 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import {
   AntDesign,
   Ionicons,
@@ -71,28 +73,28 @@ const Index = () => {
     showMode("date");
   };
 
-  const suggestions = [
-    {
-      id: "0",
-      todo: "Go for a walk",
-    },
-    {
-      id: "1",
-      todo: "Go exercise",
-    },
-    {
-      id: "2",
-      todo: "Go shopping",
-    },
-    {
-      id: "3",
-      todo: "Go to bed early",
-    },
-    {
-      id: "4",
-      todo: "Hang out with friends",
-    },
-  ];
+  // const suggestions = [
+  //   {
+  //     id: "0",
+  //     todo: "Go for a walk",
+  //   },
+  //   {
+  //     id: "1",
+  //     todo: "Go exercise",
+  //   },
+  //   {
+  //     id: "2",
+  //     todo: "Go shopping",
+  //   },
+  //   {
+  //     id: "3",
+  //     todo: "Go to bed early",
+  //   },
+  //   {
+  //     id: "4",
+  //     todo: "Hang out with friends",
+  //   },
+  // ];
 
   const handleModal = () => {
     setModalVisible(!isModalVisible);
@@ -129,7 +131,7 @@ const Index = () => {
       const token = await AsyncStorage.getItem("authToken");
       const email = await AsyncStorage.getItem("userEmail");
       const response = await axios.get(
-        `http://192.168.1.41:8000/api/user-task/${userId}/${email}`,
+        `http://192.168.1.6:8000/api/user-task/${userId}/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -194,7 +196,7 @@ const Index = () => {
       const token = await AsyncStorage.getItem("authToken");
       const email = await AsyncStorage.getItem("userEmail");
       const response = await axios.get(
-        `http://192.168.1.41:8000/api/user-team/${email}`,
+        `http://192.168.1.6:8000/api/user-team/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -209,6 +211,7 @@ const Index = () => {
       console.log("error", error);
     }
   };
+
 
   const isFocused = useIsFocused();
 
@@ -337,6 +340,9 @@ const Index = () => {
     }
   };
 
+  const navigation = useNavigation();
+  
+
   return (
     <>
       <View
@@ -410,6 +416,7 @@ const Index = () => {
                     borderRadius: 7,
                     marginVertical: 10,
                   }}
+                  onPress={() => navigation.navigate("TeamTask", {id: item?._id})}
                   key={index}
                 >
                   <View
@@ -419,19 +426,9 @@ const Index = () => {
                       gap: 10,
                     }}
                   >
-                    <Entypo
-                      onPress={() => markTodoAsCompleted(item?.user_id)}
-                      name="circle"
-                      size={18}
-                      color="black"
-                    />
+                    
                     <Text style={{ flex: 1 }}>{item?.team_name}</Text>
-                    <Feather
-                      onPress={() => handleDeleteTask(item?._id)}
-                      name="flag"
-                      size={20}
-                      color="black"
-                    />
+                    
                   </View>
                 </Pressable>
               ))}
