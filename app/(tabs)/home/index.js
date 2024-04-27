@@ -6,130 +6,35 @@ import {
   View,
   Image,
   ScrollView,
-  TextInput,
-  Button,
-  Modal,
-  SafeAreaView,
-  KeyboardAvoidingView,
+  RefreshControl,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-import {
-  AntDesign,
-  Ionicons,
-  Entypo,
-  Feather,
-  MaterialIcons,
-  FontAwesome,
-} from "@expo/vector-icons";
-import {
-  BottomModal,
-  ModalContent,
-  SlideAnimation,
-  ModalTitle,
-} from "react-native-modals";
+import { FontAwesome } from "@expo/vector-icons";
 import axios from "axios";
-import moment from "moment";
-import FlashMessage from "react-native-flash-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { firstTimeLogin } from "../../(authenticate)/login";
-import { useRoute } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+
+const wait = (timeout) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, timeout);
+  });
+};
 
 const Index = () => {
-  const [todos, setTodos] = useState({});
-  const [teams, setTeams] = useState({});
-  const [team, setTeam] = useState("")
-  const today = moment().format("MMM Do");
+  const [team, setTeam] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
   const [category, setCategory] = useState("Work");
-  const [todo, setTodo] = useState("");
-  const [pendingTodos, setPendingTodos] = useState([]);
-  const [completedTodos, setCompletedTodos] = useState([]);
+
   const [hasLoggedInOnce, setHasLoggedInOnce] = useState(false);
   const [marked, setMarked] = useState(false);
-  const [mode, setMode] = useState("date");
-  const [show, setShow] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState(new Date());
-  const [categoryTask, setCategoryTask] = useState("");
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setDate(currentDate);
-
-    // Close date picker after selection
-    setShow(false);
-  };
-
-  const showMode = (currentMode) => {
-    setShow(!show);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
-  // const suggestions = [
-  //   {
-  //     id: "0",
-  //     todo: "Go for a walk",
-  //   },
-  //   {
-  //     id: "1",
-  //     todo: "Go exercise",
-  //   },
-  //   {
-  //     id: "2",
-  //     todo: "Go shopping",
-  //   },
-  //   {
-  //     id: "3",
-  //     todo: "Go to bed early",
-  //   },
-  //   {
-  //     id: "4",
-  //     todo: "Hang out with friends",
-  //   },
-  // ];
-
-  const handleModal = () => {
-    setModalVisible(!isModalVisible);
-    console.log(isModalVisible);
-  };
-
-  const handleCloseModal = () => {
-    setModalVisible(false);
-  };
-
-  const addTodo = async () => {
-    // try {
-    //   const userId = await AsyncStorage.getItem("userId"); // Retrieve userId from AsyncStorage
-    //   const todoData = {
-    //     userId: userId, // Assign userId to the todoData object
-    //     title: todo,
-    //     category: category,
-    //   };
-    //   await axios.post(
-    //     https://task-db-rosy.vercel.app/todos/${userId},
-    //     todoData
-    //   );
-    //   await getUserTodos();
-    //   setTodo("");
-    //   setModalVisible(false);
-    // } catch (error) {
-    //   console.log("error", error);
-    // }
-  };
+  const [refreshing, setRefreshing] = useState(false);
 
   const getUserTodos = async () => {
     try {
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("authToken");
       const email = await AsyncStorage.getItem("userEmail");
+      // change this url
       const response = await axios.get(
         `http://192.168.1.6:8000/api/user-task/${userId}/${email}`,
         {
@@ -138,18 +43,21 @@ const Index = () => {
           },
         }
       );
-  
+
       const userTask = response?.data?.data;
       setTodo(userTask);
-  
-      // Filter todos based on the selected category
-      const filteredTodos = userTask.filter((todo) => todo.category === category);
-  
-      // Filter pending and completed todos separately
-      const pending = filteredTodos.filter((todo) => todo.status !== "completed");
-      const completed = filteredTodos.filter((todo) => todo.status === "completed");
-  
-      // Set state with filtered todos
+
+      const filteredTodos = userTask.filter(
+        (todo) => todo.category === category
+      );
+
+      const pending = filteredTodos.filter(
+        (todo) => todo.status !== "completed"
+      );
+      const completed = filteredTodos.filter(
+        (todo) => todo.status === "completed"
+      );
+
       setTodos(filteredTodos);
       setPendingTodos(pending);
       setCompletedTodos(completed);
@@ -157,7 +65,6 @@ const Index = () => {
       console.log("error", error);
     }
   };
-  
 
   useEffect(() => {
     const getUserData = async () => {
@@ -186,8 +93,7 @@ const Index = () => {
     };
 
     if (!hasLoggedInOnce) {
-      // Check if firstTimeLogin has occurred
-      checkFirstTimeLogin(); // If not, call checkFirstTimeLogin
+      checkFirstTimeLogin();
     }
   }, []);
 
@@ -203,15 +109,13 @@ const Index = () => {
           },
         }
       );
-  
+
       const userTeam = response?.data;
       setTeam(userTeam);
-
     } catch (error) {
       console.log("error", error);
     }
   };
-
 
   const isFocused = useIsFocused();
 
@@ -221,40 +125,6 @@ const Index = () => {
       getUserTeams();
     }
   }, [isFocused, category, marked, isModalVisible]);
-
-
-  const markTodoAsCompleted = async (todoId) => {
-    // try {
-    //   setMarked(true);
-    //   await axios.patch(
-    //     https://task-db-rosy.vercel.app/todos/${todoId}/complete
-    //   );
-    //   await getUserTodos();
-    //   handleFlashMessage(
-    //     "Task marked as completed!",
-    //     "Task successfully marked as completed",
-    //     "success"
-    //   );
-    // } catch (error) {
-    //   console.log("error", error);
-    // }
-  };
-
-  const handleDeleteTask = async (todoIdDelete) => {
-    // try {
-    //   await axios.delete(
-    //     https://task-db-rosy.vercel.app/todos/${todoIdDelete}
-    //   );
-    //   await getUserTodos();
-    //   handleFlashMessage(
-    //     "Task Deleted!",
-    //     "Task successfully deleted",
-    //     "success"
-    //   );
-    // } catch (error) {
-    //   console.log("Error deleting task:", error);
-    // }
-  };
 
   const flashMessage = useRef();
 
@@ -276,72 +146,16 @@ const Index = () => {
     });
   };
 
-  const firstTimeLogin = async () => {
-    try {
-      // Check if the flag indicating first-time login exists in AsyncStorage
-      const isFirstTimeLogin = await AsyncStorage.getItem("firstTimeLogin");
-
-      if (!isFirstTimeLogin) {
-        // If it's the first time logging in, set the flag in AsyncStorage
-        await AsyncStorage.setItem("firstTimeLogin", "true");
-        // Perform actions for first-time login
-        console.log("You've successfully logged in for the first time!");
-      } else {
-        // If it's not the first time logging in, perform actions accordingly
-        handleFlashMessage(
-          "Login!",
-          "You have succesfully logged in",
-          "success"
-        );
-      }
-    } catch (error) {
-      console.error("Error checking first-time login:", error);
-    }
-  };
-
-  const handleAddTask = async () => {
-    const userId = await AsyncStorage.getItem("userId");
-    const token = await AsyncStorage.getItem("authToken");
-    const data = {
-      user_id: userId,
-      title: title,
-      description: description,
-      category: categoryTask,
-      dueDate: date,
-    };
-
-    try {
-      const response = await axios.post(
-        `http://192.168.1.41:8000/api/add-task`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      // Clear input fields and close modal
-      setTitle("");
-      setDescription("");
-      setCategoryTask("");
-      setDate(new Date()); // Reset date to current date
-      setModalVisible(false);
-
-      // Show success message or perform any other action
-      handleFlashMessage("Task Added!", "Task successfully added", "success");
-
-      return response.data;
-    } catch (error) {
-      if (error.response) {
-        console.log("Error response data:", error.response.data);
-      }
-    }
-  };
-
   const navigation = useNavigation();
-  
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    wait(2000).then(() => {
+      setRefreshing(false);
+      getUserTodos();
+      getUserTeams();
+    });
+  };
 
   return (
     <>
@@ -376,7 +190,7 @@ const Index = () => {
             Work
           </Text>
         </Pressable>
-        <Pressable
+        {/* <Pressable
           onPress={() => {
             setCategory("Personal");
             getUserTodos();
@@ -399,10 +213,15 @@ const Index = () => {
           >
             Personal
           </Text>
-        </Pressable>
+        </Pressable> */}
       </View>
 
-      <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: "white" }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         <View style={{ padding: 10, backgroundColor: "white" }}>
           {team.teams?.length > 0 ? (
             <View>
@@ -416,7 +235,9 @@ const Index = () => {
                     borderRadius: 7,
                     marginVertical: 10,
                   }}
-                  onPress={() => navigation.navigate("TeamTask", {id: item?._id})}
+                  onPress={() =>
+                    navigation.navigate("TeamTask", { id: item?._id })
+                  }
                   key={index}
                 >
                   <View
@@ -426,13 +247,10 @@ const Index = () => {
                       gap: 10,
                     }}
                   >
-                    
                     <Text style={{ flex: 1 }}>{item?.team_name}</Text>
-                    
                   </View>
                 </Pressable>
               ))}
-              
             </View>
           ) : (
             <View
@@ -461,142 +279,10 @@ const Index = () => {
               >
                 No Teams for today!
               </Text>
-              <Pressable onPress={handleModal} style={{ marginTop: 15 }}>
-                <AntDesign name="pluscircle" size={30} color="#007FFF" />
-              </Pressable>
             </View>
           )}
         </View>
       </ScrollView>
-
-      {/* <View style={styles.container}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => {
-            console.warn("closed");
-          }}
-        >
-          <View style={styles.View}>
-            <Text style={styles.text}>ADD TASK</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                backgroundColor: "#E0E0E0",
-                paddingVertical: 1,
-                borderRadius: 5,
-                marginTop: 30,
-              }}
-            >
-              <TextInput
-                style={{
-                  color: "gray",
-                  marginVertical: 0,
-                  width: 300,
-                  padding: 10,
-                }}
-                placeholder="Title"
-                value={title}
-                onChangeText={(text) => setTitle(text)}
-                multiline={true}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 5,
-                backgroundColor: "#E0E0E0",
-                height: 100,
-                borderRadius: 5,
-                marginTop: 20,
-              }}
-            >
-              <TextInput
-                style={{
-                  color: "gray",
-                  width: 300,
-                  padding: 10,
-                  textAlignVertical: "top",
-                }}
-                placeholder="Description"
-                value={description}
-                onChangeText={(text) => setDescription(text)}
-                multiline={true}
-              />
-            </View>
-            <Text
-              style={{
-                width: "100%",
-                marginTop: 20,
-                marginBottom: 20,
-                fontWeight: "900",
-              }}
-            >
-              Category
-            </Text>
-
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 20,
-                width: "100%",
-              }}
-            >
-              <Button
-                title="Personal"
-                onPress={() => {
-                  setCategoryTask("personal");
-                }}
-                color={categoryTask === "personal" ? "blue" : ""}
-              />
-              <Button
-                title="Work"
-                onPress={() => {
-                  setCategoryTask("work");
-                }}
-                color={categoryTask === "work" ? "blue" : ""}
-              />
-            </View>
-            <View style={{ width: "100%", marginTop: 20 }}>
-              <Text
-                style={{
-                  width: "100%",
-                  marginTop: 10,
-                  marginBottom: 20,
-                  fontWeight: "900",
-                }}
-              >
-                Due Date
-              </Text>
-              <Button onPress={showDatepicker} title="Select due date" />
-            </View>
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                display="default"
-                onChange={onChange}
-              />
-            )}
-
-            <View style={{ flexGrow: 1 }}></View>
-            <View style={{ width: "100%" }}>
-              <Button title="Add Task" onPress={handleAddTask} />
-            </View>
-            <View style={{ width: "100%", marginTop: 10 }}>
-              <Button title="Close" onPress={handleCloseModal} color={"red"} />
-            </View>
-          </View> */}
-        {/* </Modal>
-      </View> */}
-
-      {/* <FlashMessage ref={flashMessage} /> */}
     </>
   );
 };

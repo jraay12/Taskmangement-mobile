@@ -19,7 +19,6 @@ const Login = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [hasLoggedInOnce, setHasLoggedInOnce] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -75,20 +74,6 @@ const Login = () => {
     }
   };
 
-  // const firstTimeLogin = async () => {
-  //   try {
-  //     const isFirstTimeLogin = await AsyncStorage.getItem('firstTimeLogin');
-
-  //     if (!isFirstTimeLogin) {
-  //       await AsyncStorage.setItem('firstTimeLogin', 'true');
-  //       console.log("You've successfully logged in for the first time!");
-  //     } else {
-  //       console.log("Welcome back!");
-  //     }
-  //   } catch (error) {
-  //     console.error('Error checking first-time login:', error);
-  //   }
-  // };
 
   return (
     <SafeAreaView

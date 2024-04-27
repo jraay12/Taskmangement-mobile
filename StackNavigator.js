@@ -12,6 +12,11 @@ export const MainStackNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{ headerTitle: null, headerShown: false }}
+      />
+      <Stack.Screen
         name="Home"
         component={HomeScreen}
         options={{ headerTitle: null, headerShown: false }}
@@ -23,11 +28,6 @@ export const MainStackNavigator = () => {
       />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{ headerTitle: null, headerShown: false }}
-      />
     </Stack.Navigator>
   );
 };
