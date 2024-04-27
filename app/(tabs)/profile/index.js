@@ -44,9 +44,8 @@ const Index = () => {
         const firstname = await AsyncStorage.getItem("userName");
         const lastname = await AsyncStorage.getItem("userLastname");
 
-        // Set the state with the retrieved values
         setUserName(`${firstname} ${lastname}`);
-        setUserEmail(""); // Replace "" with the actual email from your data
+        setUserEmail(""); 
 
         const isLoginScreen = navigation
           .dangerouslyGetState()
