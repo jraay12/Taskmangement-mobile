@@ -7,7 +7,7 @@ import {
   Pressable,
   Alert,
   KeyboardAvoidingView,
-  ScrollView, // Import ScrollView
+  ScrollView,
 } from "react-native";
 import axios from "axios";
 import React, { useState } from "react";
@@ -33,6 +33,7 @@ const Register = () => {
     };
 
     axios
+      // change this url
       .post("http://192.168.1.6:8000/api/create-user", user)
       .then((response) => {
         console.log(response);
@@ -45,7 +46,7 @@ const Register = () => {
         setEmail("");
         setPassword("");
         setConfirmationPassword("");
-        navigation.navigate("Login")
+        navigation.navigate("Login");
       })
       .catch((error) => {
         Alert.alert(
@@ -61,7 +62,7 @@ const Register = () => {
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={{ marginTop: 20, alignItems: "center"}}>
+        <View style={{ marginTop: 20, alignItems: "center" }}>
           <Text style={{ fontSize: 30, fontWeight: "900", color: "#0066b2" }}>
             Task Manager App
           </Text>
@@ -254,7 +255,12 @@ const Register = () => {
               style={{ marginTop: 15 }}
             >
               <Text
-                style={{ textAlign: "center", fontSize: 15, color: "gray", marginBottom: 40}}
+                style={{
+                  textAlign: "center",
+                  fontSize: 15,
+                  color: "gray",
+                  marginBottom: 40,
+                }}
               >
                 Already have an account? Login here!
               </Text>
