@@ -9,6 +9,7 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
@@ -19,6 +20,7 @@ const FirstPage = () => {
   const [selectedTask, setSelectedTask] = useState(null); 
   const [modalVisible, setModalVisible] = useState(false); 
   const [refreshing, setRefreshing] = useState(false); 
+  const route = useRoute();
   const { id } = route.params || {};
   const isFocused = useIsFocused();
   const flashMessage = useRef(null);
@@ -157,7 +159,7 @@ const FirstPage = () => {
                 marginBottom: 10,
               }}
             >
-              <Text style={{ fontWeight: "900" }}>Description:</Text>
+              <Text style={{ fontWeight: "900" }}>Due Date:</Text>
               <Text style={styles.modalDueDate}>{selectedTask?.dueDate}</Text>
             </View>
             <View

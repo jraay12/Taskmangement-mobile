@@ -22,11 +22,7 @@ const wait = (timeout) => {
 
 const Index = () => {
   const [team, setTeam] = useState("");
-  const [isModalVisible, setModalVisible] = useState(false);
   const [category, setCategory] = useState("Work");
-
-  const [hasLoggedInOnce, setHasLoggedInOnce] = useState(false);
-  const [marked, setMarked] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const getUserTodos = async () => {
@@ -66,42 +62,13 @@ const Index = () => {
     }
   };
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const userId = await AsyncStorage.getItem("userId");
-      } catch (error) {
-        console.error("Error retrieving user data:", error);
-      }
-    };
-
-    getUserData();
-
-    const checkFirstTimeLogin = async () => {
-      try {
-        const isFirstTimeLogin = await AsyncStorage.getItem("firstTimeLogin");
-        if (isFirstTimeLogin) {
-          handleFlashMessage(
-            "Success!",
-            "You have successfully logged in",
-            "success"
-          );
-        }
-      } catch (error) {
-        console.error("Error checking first-time login:", error);
-      }
-    };
-
-    if (!hasLoggedInOnce) {
-      checkFirstTimeLogin();
-    }
-  }, []);
 
   const getUserTeams = async () => {
     try {
       const token = await AsyncStorage.getItem("authToken");
       const email = await AsyncStorage.getItem("userEmail");
       const response = await axios.get(
+        // change this URL
         `http://192.168.1.6:8000/api/user-team/${email}`,
         {
           headers: {
@@ -124,27 +91,7 @@ const Index = () => {
       getUserTodos();
       getUserTeams();
     }
-  }, [isFocused, category, marked, isModalVisible]);
-
-  const flashMessage = useRef();
-
-  const handleFlashMessage = (message, description, type) => {
-    flashMessage.current.showMessage({
-      message,
-      description,
-      type,
-      position: "bottom",
-      style: {},
-      icon: () => (
-        <FontAwesome
-          name="check-circle"
-          size={24}
-          color="white"
-          style={{ paddingRight: 20, paddingTop: 14 }}
-        />
-      ),
-    });
-  };
+  }, [isFocused, category]);
 
   const navigation = useNavigation();
 
