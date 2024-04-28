@@ -96,7 +96,6 @@ const FirstPage = () => {
       setRefreshing(false);
     }
   };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>TEAM TASK</Text>
@@ -108,11 +107,11 @@ const FirstPage = () => {
         {filterTask && filterTask?.length > 0 ? (
           filterTask?.map((task) => (
             <TouchableOpacity
-              key={task.id}
+              key={task?._id}
               style={styles.taskContainer}
               onPress={() => handlePress(task)}
             >
-              <View style={styles.box}>
+              <View style={styles.box} >
                 <Text style={styles.taskTitle}>{task?.title}</Text>
                 <Text style={styles.taskDueDate}>{task?.dueDate}</Text>
               </View>

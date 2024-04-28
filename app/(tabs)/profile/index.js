@@ -39,21 +39,11 @@ const Index = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId = await AsyncStorage.getItem("userId");
-        const token = await AsyncStorage.getItem("authToken");
         const firstname = await AsyncStorage.getItem("userName");
         const lastname = await AsyncStorage.getItem("userLastname");
 
         setUserName(`${firstname} ${lastname}`);
-        setUserEmail(""); 
-
-        const isLoginScreen = navigation
-          .dangerouslyGetState()
-          .routeNames.includes("Login");
-
-        if (token && isLoginScreen) {
-          navigation.navigate("Profile");
-        }
+       
       } catch (error) {
         console.log("Error fetching data from AsyncStorage:", error);
       }

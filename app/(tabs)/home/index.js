@@ -25,44 +25,6 @@ const Index = () => {
   const [category, setCategory] = useState("Work");
   const [refreshing, setRefreshing] = useState(false);
 
-  const getUserTodos = async () => {
-    try {
-      const userId = await AsyncStorage.getItem("userId");
-      const token = await AsyncStorage.getItem("authToken");
-      const email = await AsyncStorage.getItem("userEmail");
-      // change this url
-      const response = await axios.get(
-        `http://192.168.1.6:8000/api/user-task/${userId}/${email}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const userTask = response?.data?.data;
-      setTodo(userTask);
-
-      const filteredTodos = userTask.filter(
-        (todo) => todo.category === category
-      );
-
-      const pending = filteredTodos.filter(
-        (todo) => todo.status !== "completed"
-      );
-      const completed = filteredTodos.filter(
-        (todo) => todo.status === "completed"
-      );
-
-      setTodos(filteredTodos);
-      setPendingTodos(pending);
-      setCompletedTodos(completed);
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-
-
   const getUserTeams = async () => {
     try {
       const token = await AsyncStorage.getItem("authToken");
@@ -88,7 +50,6 @@ const Index = () => {
 
   useEffect(() => {
     if (isFocused) {
-      getUserTodos();
       getUserTeams();
     }
   }, [isFocused, category]);
