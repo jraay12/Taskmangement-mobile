@@ -141,11 +141,12 @@ const Register = () => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: 5,
+
                   backgroundColor: "#E0E0E0",
                   paddingVertical: 5,
                   borderRadius: 5,
                   marginTop: 30,
+                
                 }}
               >
                 <Ionicons
@@ -156,10 +157,10 @@ const Register = () => {
                 />
                 <Picker
                   selectedValue={gender}
-                
-                  style={{ height: 50, width: 300 }} 
-                  onValueChange={(itemValue) => setGender(itemValue)}
+                  style={{ height: 50, width: 300  }}
+                  onValueChange={(itemValue) => setGender(itemValue)}          
                 >
+                  <Picker.Item label="Select Gender" value="" />
                   <Picker.Item label="Male" value="Male" />
                   <Picker.Item label="Female" value="Female" />
                 </Picker>
@@ -186,7 +187,7 @@ const Register = () => {
                   style={{
                     color: "gray",
                     marginVertical: 10,
-                    width: 300, 
+                    width: 300,
                     paddingLeft: 4,
                     fontSize: email ? 17 : 17,
                   }}
