@@ -4,6 +4,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import femaleUser from "../../../assets/femaleUser.png";
+import maleUser from "../../../assets/maleUser.png";
 
 const Index = () => {
   const navigation = useNavigation();
@@ -11,7 +13,7 @@ const Index = () => {
   const [completedTasks, setCompletedTasks] = useState(0);
   const [total, setTotal] = useState(0);
   const [userName, setUserName] = useState(null);
-
+  const [gender, setGender] = useState("");
 
   const isFocused = useIsFocused();
   const RetrieveAllTaskUser = async () => {
@@ -41,9 +43,9 @@ const Index = () => {
       try {
         const firstname = await AsyncStorage.getItem("userName");
         const lastname = await AsyncStorage.getItem("userLastname");
-
+        const gender = await AsyncStorage.getItem("gender");
         setUserName(`${firstname} ${lastname}`);
-       
+        setGender(gender);
       } catch (error) {
         console.log("Error fetching data from AsyncStorage:", error);
       }
@@ -56,13 +58,9 @@ const Index = () => {
     <View style={styles.container}>
       <View style={styles.profileHeader}>
         <Image
-          source={{
-            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNNR9Nj4PTouXiAhhI_iJGOnexigCjuORQGc0mDvA1xw&s",
-          }} 
+          source={(gender === "Male" || gender === "male") ? maleUser : femaleUser}
           style={styles.profileImage}
-          defaultSource={{
-            uri: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fgoat&psig=AOvVaw0GOOwCnNvXUfb7yGjnO5sC&ust=1713460242169000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCMiKhfreyYUDFQAAAAAdAAAAABAE",
-          }} 
+          defaultSource={{ uri: "https://www.example.com/default-image.png" }}
         />
         <Text style={styles.profileName}>{userName}</Text>
         <Text style={styles.profileBio}>

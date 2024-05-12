@@ -53,11 +53,10 @@ const Login = () => {
         Alert.alert("Error", "Token is empty");
         return;
       }
-
       const userId = response.data.data.userId;
       const firstName = response.data.data.firstname;
       const email = response.data.data.email;
-
+      const gender = response.data.data.gender
       const lastName = response.data.data.lastname;
 
       await AsyncStorage.setItem("authToken", token);
@@ -65,6 +64,7 @@ const Login = () => {
       await AsyncStorage.setItem("userName", firstName);
       await AsyncStorage.setItem("userLastname", lastName);
       await AsyncStorage.setItem("userEmail", email);
+      await AsyncStorage.setItem("gender", gender);
 
       Alert.alert("Success", "You have successfully logged in");
       setEmail("");

@@ -9,6 +9,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+
 import axios from "axios";
 import React, { useState } from "react";
 import { MaterialIcons, AntDesign, Ionicons } from "@expo/vector-icons";
@@ -20,6 +22,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmation_password, setConfirmationPassword] = useState("");
+  const [gender, setGender] = useState("");
 
   const navigation = useNavigation();
 
@@ -28,6 +31,7 @@ const Register = () => {
       first_name: first_name,
       last_name: last_name,
       email: email,
+      gender: gender,
       password: password,
       confirmation_password: confirmation_password,
     };
@@ -44,6 +48,7 @@ const Register = () => {
         setFirstname("");
         setLastname("");
         setEmail("");
+        setGender("");
         setPassword("");
         setConfirmationPassword("");
         navigation.navigate("Login");
@@ -132,12 +137,37 @@ const Register = () => {
                   placeholder="Last Name"
                 />
               </View>
-
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 5,
+                  backgroundColor: "#E0E0E0",
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                  marginTop: 30,
+                }}
+              >
+                <Ionicons
+                  style={{ marginLeft: 8 }}
+                  name="person"
+                  size={24}
+                  color="gray"
+                />
+                <Picker
+                  selectedValue={gender}
+                
+                  style={{ height: 50, width: 300 }} 
+                  onValueChange={(itemValue) => setGender(itemValue)}
+                >
+                  <Picker.Item label="Male" value="Male" />
+                  <Picker.Item label="Female" value="Female" />
+                </Picker>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
                   backgroundColor: "#E0E0E0",
                   paddingVertical: 5,
                   borderRadius: 5,
@@ -156,7 +186,8 @@ const Register = () => {
                   style={{
                     color: "gray",
                     marginVertical: 10,
-                    width: 300,
+                    width: 300, 
+                    paddingLeft: 4,
                     fontSize: email ? 17 : 17,
                   }}
                   placeholder="Enter your email"
