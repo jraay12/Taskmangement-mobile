@@ -24,7 +24,7 @@ const Index = () => {
 
       const response = await axios.get(
         // change this url
-        `http://192.168.1.6:8000/api/user-task/${userId}/${email}`,
+        `http://192.168.1.41:8000/api/user-task/${userId}/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

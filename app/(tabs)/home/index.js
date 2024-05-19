@@ -31,7 +31,7 @@ const Index = () => {
       const email = await AsyncStorage.getItem("userEmail");
       const response = await axios.get(
         // change this URL
-        `http://192.168.1.6:8000/api/user-team/${email}`,
+        `http://192.168.1.41:8000/api/user-team/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,7 +60,6 @@ const Index = () => {
     setRefreshing(true);
     wait(2000).then(() => {
       setRefreshing(false);
-      getUserTodos();
       getUserTeams();
     });
   };
@@ -209,7 +208,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#EFF4F6",
     borderWidth: 1,
-
     padding: 20,
   },
   text: {

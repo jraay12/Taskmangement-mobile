@@ -31,7 +31,7 @@ const FirstPage = () => {
 
     try {
       // change this url
-      const response = await axios.get(`http://192.168.1.6:8000/api/all-task`, {
+      const response = await axios.get(`http://192.168.1.41:8000/api/all-task`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -73,7 +73,7 @@ const FirstPage = () => {
 
     try {
       // change this url
-      await axios.put(`http://192.168.1.6:8000/api/edit-status`, data, {
+      await axios.put(`http://192.168.1.41:8000/api/edit-status`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
