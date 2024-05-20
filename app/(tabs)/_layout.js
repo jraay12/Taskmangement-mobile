@@ -37,7 +37,7 @@ export default function Layout(){
           options={{ 
               tabBarLabel: "Profile", 
               tabBarLabelStyle: { color: "#7CB9E8" },
-              headerShown: false,
+              headerShown: true,
               tabBarIcon:({focused}) => focused? (
                   <MaterialCommunityIcons name = "account-details" size = {24} color = "#7CB9E8" />
               ): (

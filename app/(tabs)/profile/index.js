@@ -24,7 +24,7 @@ const Index = () => {
 
       const response = await axios.get(
         // change this url
-        `http://192.168.1.6:8000/api/user-task/${userId}/${email}`,
+        `http://192.168.1.41:8000/api/user-task/${userId}/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -63,9 +63,6 @@ const Index = () => {
           defaultSource={{ uri: "https://www.example.com/default-image.png" }}
         />
         <Text style={styles.profileName}>{userName}</Text>
-        <Text style={styles.profileBio}>
-          I don't always test my code, but when I do, I do it in production.{" "}
-        </Text>
       </View>
       <View style={styles.card}>
         <Text style={styles.cardTitle}>{total}</Text>
@@ -101,11 +98,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 5,
-  },
-  profileBio: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#555",
   },
   profileDetails: {
     borderTopWidth: 1,

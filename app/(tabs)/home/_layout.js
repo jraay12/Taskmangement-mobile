@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Text, Pressable, View, StyleSheet, Animated } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { Text, Pressable, View, StyleSheet, Animated, PanResponder, Dimensions } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ModalPortal } from "react-native-modals";
 import { useNavigation } from "@react-navigation/native";
@@ -12,7 +12,28 @@ const Stack = createStackNavigator();
 export default function Layout() {
   const navigation = useNavigation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [animation] = useState(new Animated.Value(0));
+  const animation = useRef(new Animated.Value(0)).current;
+
+  const screenWidth = Dimensions.get('window').width;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => gestureState.x0 < screenWidth * 0.1,
+      onMoveShouldSetPanResponder: (evt, gestureState) => gestureState.dx > 0 && gestureState.x0 < screenWidth * 0.1,
+      onPanResponderMove: (evt, gestureState) => {
+        if (gestureState.dx > 0 && gestureState.dx < 200) {
+          animation.setValue(gestureState.dx / 200);
+        }
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        if (gestureState.dx > 100) {
+          setIsSidebarOpen(true);
+        } else {
+          setIsSidebarOpen(false);
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     if (isSidebarOpen) {
@@ -36,7 +57,7 @@ export default function Layout() {
 
   const sidebarTranslateX = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [-200, 0],
+    outputRange: [-220, 0],
   });
 
   return (
@@ -71,6 +92,7 @@ export default function Layout() {
             transform: [{ translateX: sidebarTranslateX }],
           },
         ]}
+        {...panResponder.panHandlers}
       >
         <View
           style={{
@@ -79,11 +101,12 @@ export default function Layout() {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontSize: 20, fontWeight: "900"  }}>TaskCore</Text>
+          <Text style={{ fontSize: 20, fontWeight: "900" }}>TaskCore</Text>
           <Pressable onPress={toggleSidebar}>
             <Text style={styles.closeButton}>&#9776;</Text>
           </Pressable>
         </View>
+
         <View
           style={{
             display: "flex",
@@ -94,12 +117,40 @@ export default function Layout() {
             borderStyle: "solid",
             height: 50,
             borderBottomWidth: 2,
-            marginTop: 100,
+            marginTop: 90,
             backgroundColor: "#FFFFFF",
-            borderRadius: 10
+            borderRadius: 10,
           }}
         >
-          <MaterialIcons style={{}} name="person" size={24} color="gray" />
+          <MaterialIcons name="home" size={24} color="gray" />
+          <Pressable onPress={() => navigation.navigate("Home")}>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 20,
+              }}
+            >
+              HOME
+            </Text>
+          </Pressable>
+        </View>
+
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 20,
+            borderColor: "black",
+            borderStyle: "solid",
+            height: 50,
+            borderBottomWidth: 2,
+            marginTop: 20,
+            backgroundColor: "#FFFFFF",
+            borderRadius: 10,
+          }}
+        >
+          <MaterialIcons name="person" size={24} color="gray" />
           <Pressable onPress={() => navigation.navigate("Profile")}>
             <Text
               style={{
@@ -118,7 +169,7 @@ export default function Layout() {
               textAlign: "center",
               fontSize: 20,
               fontWeight: "600",
-              color: "red"
+              color: "red",
             }}
           >
             LOGOUT
@@ -135,15 +186,14 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
-    width: 200,
+    width: 230,
     backgroundColor: "#FFFFFF",
     padding: 20,
     marginTop: 40,
-    shadowColor: "black"
+    shadowColor: "black",
   },
   closeButton: {
     textAlign: "right",
     fontSize: 20,
-    
   },
 });
