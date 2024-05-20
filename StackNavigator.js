@@ -26,7 +26,11 @@ export const MainStackNavigator = () => {
         component={TeamTask}
         options={{ headerTitle: null, headerShown: false }}
       />
-      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{ headerTitle: null, headerShown: false }}
+      />
       <Stack.Screen name="Register" component={Register} />
     </Stack.Navigator>
   );

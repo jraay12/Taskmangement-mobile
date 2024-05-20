@@ -207,8 +207,9 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     backgroundColor: "#EFF4F6",
-    borderWidth: 1,
+    borderWidth: 3,
     padding: 20,
+    borderColor: "red",
   },
   text: {
     fontSize: 25,

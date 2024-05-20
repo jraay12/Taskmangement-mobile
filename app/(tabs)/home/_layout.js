@@ -57,7 +57,7 @@ export default function Layout() {
 
   const sidebarTranslateX = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [-223, 0],
+    outputRange: [-220, 0],
   });
 
   return (
@@ -106,6 +106,7 @@ export default function Layout() {
             <Text style={styles.closeButton}>&#9776;</Text>
           </Pressable>
         </View>
+
         <View
           style={{
             display: "flex",
@@ -116,7 +117,35 @@ export default function Layout() {
             borderStyle: "solid",
             height: 50,
             borderBottomWidth: 2,
-            marginTop: 100,
+            marginTop: 90,
+            backgroundColor: "#FFFFFF",
+            borderRadius: 10,
+          }}
+        >
+          <MaterialIcons name="home" size={24} color="gray" />
+          <Pressable onPress={() => navigation.navigate("Home")}>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 20,
+              }}
+            >
+              HOME
+            </Text>
+          </Pressable>
+        </View>
+
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 20,
+            borderColor: "black",
+            borderStyle: "solid",
+            height: 50,
+            borderBottomWidth: 2,
+            marginTop: 20,
             backgroundColor: "#FFFFFF",
             borderRadius: 10,
           }}
